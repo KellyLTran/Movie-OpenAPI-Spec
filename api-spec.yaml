@@ -1,0 +1,101 @@
+openapi: 3.0.0
+info:
+  title: Movie Options API
+  description: This API displays movie options and details that fit the specified user preferences for the movie genre, dates, and location.
+  version: 0.1.9
+  
+servers:
+  - url: http://api.movietickets.com/v1
+    description: Main production server
+  - url: http://staging-api.movietickets.com
+    description: Internal test server
+
+paths:
+  /movieOptions: 
+    get:
+      summary: Returns a list of movies and their details based on user preferences.
+      parameters:
+        - name: genre
+          in: query
+          required: false
+          description: The genre to filter the movies by.
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: false
+          description: The date to filter the movie showtimes by.
+          schema:
+            type: string
+            format: date
+        - name: location
+          in: query
+          required: false
+          description: The location to filter the movie showtimes by.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JSON array of movies with their titles, showtimes, and ratings.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    showtimes:
+                      type: array
+                      items:
+                        type: string
+                    ratings:
+                      type: string
+        '400':
+          description: The specified filters are invalid.
+        '404':
+          description: Movies matching the specified filters were not found.
+          
+    post:
+      summary: Adds a movie option based on user preferences.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                showtimes:
+                  type: array
+                  items:
+                    type: string
+                ratings:
+                  type: string
+      responses:
+        '201':
+          description: The movie option was added successfully.
+        '400':
+          description: The specified movie option is invalid.
+        '404':
+          description: The specified movie option was not found.
+          
+    delete:
+      summary: Removes a movie option.
+      parameters:
+        - name: title
+          in: query
+          required: true
+          description: The title of the movie to remove.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The movie option was removed successfully.
+        '400':
+          description: The specified movie option is invalid.
+        '404':
+          description: The specified movie option was not found.
+  
